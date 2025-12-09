@@ -2,7 +2,7 @@ import express from 'express';
 import Task from './taskModel';
 import asyncHandler from 'express-async-handler';
 
-const router = express.Router(); // eslint-disable-line
+const router = express.Router();  
 
 // Get all tasks
 router.get('/', async (req, res) => {
