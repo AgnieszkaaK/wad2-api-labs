@@ -6,10 +6,11 @@ import './db';
 import cors from 'cors';
 //... other imports
 import usersRouter from './api/users';
+import authenticate from './authenticate';
 
 
 dotenv.config();
-const errHandler = (err, req, res, next) => {
+const errHandler = (err, req, res) => {
   /* if the error in development then send stack trace to display whole error,
   if it's in production then just send error message  */
   if(process.env.NODE_ENV === 'production') {
@@ -26,7 +27,7 @@ const port = process.env.PORT;
 
 app.use(express.json());
 
-app.use('/api/tasks', tasksRouter);
+app.use('/api/tasks', authenticate, tasksRouter);
 //Users router
 app.use('/api/users', usersRouter);
 
