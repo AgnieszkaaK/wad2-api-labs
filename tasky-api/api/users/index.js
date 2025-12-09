@@ -10,13 +10,24 @@ router.get('/', async (req, res) => {
     const users = await User.find();
     res.status(200).json(users);
 });
-
 // register(Create)/Authenticate User
 router.post('/', asyncHandler(async (req, res) => {
     try {
         if (!req.body.username || !req.body.password) {
             return res.status(400).json({ success: false, msg: 'Username and password are required.' });
         }
+        
+
+const passwordValid = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+
+if (!passwordValid.test(req.body.password)) {
+  return res.status(400).json({
+    success: false,
+    msg: 'Password must be at least be 8 characters and contain at least one character, a digit, and a special character.'
+  });
+}
+
+
         if (req.query.action === 'register') {
             await registerUser(req, res);
         } else {
