@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 
 const router = express.Router(); // eslint-disable-line
+const passwordValid = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -16,28 +17,24 @@ router.post('/', asyncHandler(async (req, res) => {
         if (!req.body.username || !req.body.password) {
             return res.status(400).json({ success: false, msg: 'Username and password are required.' });
         }
-        
 
-const passwordValid = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+if (req.query.action === 'register') {
+      if (!passwordValid.test(req.body.password)) {
+        return res.status(400).json({
+          success: false,
+          msg: 'Password must be at least 8 characters long and include a letter, a number, and a special character.'
+        });
+      }
 
-if (!passwordValid.test(req.body.password)) {
-  return res.status(400).json({
-    success: false,
-    msg: 'Password must be at least be 8 characters and contain at least one character, a digit, and a special character.'
-  });
-}
-
-
-        if (req.query.action === 'register') {
-            await registerUser(req, res);
-        } else {
-            await authenticateUser(req, res);
-        }
-    } catch (error) {
-        // Log the error and return a generic error message
-        console.error(error);
-        res.status(500).json({ success: false, msg: 'Internal server error.' });
+      await registerUser(req, res);
+    } else {
+      await authenticateUser(req, res);
     }
+  } catch (error) {
+    // Log the error and return a generic error message
+    console.error(error);
+    res.status(500).json({ success: false, msg: 'Internal server error.' });
+  }
 }));
 
 // ... Code as before
