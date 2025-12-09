@@ -10,7 +10,7 @@ import authenticate from './authenticate';
 
 
 dotenv.config();
-const errHandler = (err, req, res) => {
+const errHandler = (err, req, res, next ) => {
   /* if the error in development then send stack trace to display whole error,
   if it's in production then just send error message  */
   if(process.env.NODE_ENV === 'production') {
@@ -26,6 +26,10 @@ app.use(cors());
 const port = process.env.PORT;
 
 app.use(express.json());
+
+app.get('/', (_req, res) => {
+  res.status(200).send('Tasky API working');
+});
 
 app.use('/api/tasks', authenticate, tasksRouter);
 //Users router
